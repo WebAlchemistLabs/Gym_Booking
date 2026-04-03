@@ -501,6 +501,17 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    min-height: 100svh;
+    height: auto;
+    align-items: flex-start;
+    padding-top: calc(var(--navbar-height) + var(--space-6));
+  }
+
+  .heroContent {
+    max-width: 100%;
+  }
+
   .heroStats {
     gap: var(--space-6);
   }

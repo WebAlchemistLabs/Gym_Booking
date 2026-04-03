@@ -70,6 +70,12 @@
   --navbar-height: 72px;
 }
 
+@media (max-width: 900px) {
+  :root {
+    --navbar-height: 84px;
+  }
+}
+
 /* ===== Reset ===== */
 *, *::before, *::after {
   box-sizing: border-box;
