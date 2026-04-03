@@ -1,0 +1,380 @@
+.pageHeader {
+  padding-top: calc(var(--navbar-height) + var(--space-16));
+  padding-bottom: var(--space-16);
+  background: var(--color-base-soft);
+  border-bottom: 1px solid var(--color-base-border);
+  text-align: center;
+}
+
+.pricingSection {
+  padding: var(--space-20) 0;
+}
+
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.pricingCard {
+  border: 1px solid var(--color-base-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  background: var(--color-base-elevated);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  position: relative;
+  transition: border-color var(--transition-base), transform var(--transition-base);
+}
+
+.pricingCard:hover {
+  border-color: var(--color-accent-border);
+  transform: translateY(-4px);
+}
+
+.pricingCardHighlight {
+  border-color: var(--color-accent-border);
+  background: linear-gradient(160deg, var(--color-base-elevated) 0%, rgba(138, 154, 110, 0.04) 100%);
+}
+
+.pricingBadge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: var(--color-accent);
+  color: var(--color-base);
+  padding: 5px 16px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.pricingBadgeElite {
+  background: var(--color-gold);
+}
+
+.pricingTierName {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-style: italic;
+  color: var(--color-text-primary);
+}
+
+.pricingPriceBlock {
+  border-top: 1px solid var(--color-base-border);
+  border-bottom: 1px solid var(--color-base-border);
+  padding: var(--space-5) 0;
+}
+
+.pricingAmount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.pricingDollar {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+}
+
+.pricingNum {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+
+.pricingPeriod {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.pricingDesc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-top: var(--space-2);
+}
+
+.pricingFeatureList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.pricingFeatureItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.pricingFeatureIcon {
+  color: var(--color-accent);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pricingNotIncluded {
+  border-top: 1px solid var(--color-base-border);
+  padding-top: var(--space-4);
+}
+
+.pricingNotIncludedLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.pricingNotIncludedItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.pricingNotIncludedIcon {
+  color: var(--color-base-muted);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pricingCta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-base);
+  background: var(--color-accent);
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+  display: block;
+  margin-top: auto;
+}
+
+.pricingCta:hover {
+  background: var(--color-accent-light);
+}
+
+.pricingCtaElite {
+  background: var(--color-gold);
+}
+
+.pricingCtaElite:hover {
+  background: var(--color-gold-light);
+}
+
+/* ─── Comparison Table ─── */
+.comparisonSection {
+  padding: var(--space-20) 0;
+  background: var(--color-base-soft);
+}
+
+.comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-10);
+  border: 1px solid var(--color-base-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.comparisonTable thead tr {
+  background: var(--color-base-elevated);
+}
+
+.comparisonTable th,
+.comparisonTable td {
+  padding: var(--space-4) var(--space-5);
+  text-align: center;
+  border-bottom: 1px solid var(--color-base-border);
+}
+
+.comparisonTable th:first-child,
+.comparisonTable td:first-child {
+  text-align: left;
+}
+
+.comparisonHeaderFeature {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.comparisonHeaderTier {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-style: italic;
+  color: var(--color-text-primary);
+}
+
+.comparisonFeatureLabel {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  text-align: left;
+}
+
+.comparisonCheck {
+  color: var(--color-accent);
+}
+
+.comparisonX {
+  color: var(--color-base-muted);
+}
+
+.comparisonTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.comparisonTable tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+/* ─── FAQ ─── */
+.faqSection {
+  padding: var(--space-20) 0 var(--space-32);
+}
+
+.faqGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-10);
+}
+
+.faqCategoryFilter {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-8);
+}
+
+.faqFilterBtn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-base-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.faqFilterBtn:hover,
+.faqFilterBtnActive {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent);
+  background: var(--color-accent-muted);
+}
+
+.faqItem {
+  border: 1px solid var(--color-base-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.faqItem:hover {
+  border-color: var(--color-accent-border);
+}
+
+.faqQuestion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--color-text-primary);
+  transition: color var(--transition-fast);
+}
+
+.faqQuestion:hover {
+  color: var(--color-text-primary);
+}
+
+.faqChevron {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: transform var(--transition-base);
+}
+
+.faqChevronOpen {
+  transform: rotate(180deg);
+}
+
+.faqAnswer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-base), padding var(--transition-fast);
+}
+
+.faqAnswerOpen {
+  max-height: 300px;
+}
+
+.faqAnswerText {
+  padding: 0 var(--space-5) var(--space-5);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  border-top: 1px solid var(--color-base-border);
+  padding-top: var(--space-4);
+}
+
+@media (max-width: 900px) {
+  .pricingGrid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .faqGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .comparisonTable {
+    font-size: 13px;
+  }
+
+  .comparisonTable th,
+  .comparisonTable td {
+    padding: var(--space-3) var(--space-3);
+  }
+}
