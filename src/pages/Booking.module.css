@@ -1,3 +1,7 @@
+/* ============================
+   BOOKING PAGE
+   ============================ */
+
 .bookingPage {
   padding-top: var(--navbar-height);
   min-height: 100vh;
@@ -23,7 +27,6 @@
 .stepsBar {
   display: flex;
   align-items: center;
-  gap: 0;
 }
 
 .stepItem {
@@ -87,19 +90,22 @@
 }
 
 /* ─── Main Layout ─── */
+/*
+  The right column is sticky and contains BOTH the booking summary
+  AND the nav buttons — so Back / Next / Confirm are always visible
+  without any scrolling, on every single step.
+*/
 .bookingLayout {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr 360px;
   gap: var(--space-8);
   padding: var(--space-8) 0 var(--space-20);
   align-items: start;
 }
 
-/* ─── Booking Panel ─── */
-.bookingPanel {
-  min-height: 500px;
-}
+/* ─── Left: Content Panel ─── */
+.bookingPanel {}
 
 .stepTitle {
   font-family: var(--font-display);
@@ -115,7 +121,7 @@
   margin-bottom: var(--space-8);
 }
 
-/* Step 1 — Select Class */
+/* ─── Step 1: Select Class ─── */
 .classSelectCategory {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -221,8 +227,21 @@
   opacity: 1;
 }
 
-/* Step 2 — Calendar */
-.calendarSection {}
+/* ─── Step 2: Date & Time — side by side ─── */
+/*
+  Calendar sits left, time slots sit right. Selecting a date
+  populates the right column — no page jump, no scrolling needed.
+*/
+.dateTimeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.calendarColumn {}
+
+.timeSlotsColumn {}
 
 .calendarHeader {
   display: flex;
@@ -233,14 +252,14 @@
 
 .calendarMonthLabel {
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 18px;
   font-style: italic;
   color: var(--color-text-primary);
 }
 
 .calendarNavBtn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border: 1px solid var(--color-base-border);
   border-radius: var(--radius-sm);
   background: none;
@@ -260,17 +279,17 @@
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
+  gap: 3px;
 }
 
 .calendarDayLabel {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.1em;
+  font-size: 9px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-muted);
   text-align: center;
-  padding-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
 }
 
 .calendarDay {
@@ -280,7 +299,7 @@
   background: none;
   cursor: pointer;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-secondary);
   display: flex;
   align-items: center;
@@ -317,16 +336,13 @@
 
 .closedNote {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--color-text-muted);
   margin-top: var(--space-3);
   letter-spacing: 0.04em;
 }
 
-.timeSlotsSection {
-  margin-top: var(--space-8);
-}
-
+/* Time slots — right half of the date/time row */
 .timeSlotsTitle {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -334,26 +350,38 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-base-border);
+}
+
+.timeSlotsSelectedDate {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--color-text-secondary);
   margin-bottom: var(--space-4);
+  line-height: 1.4;
 }
 
 .timeSlotsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-2);
 }
 
 .timeSlotBtn {
-  padding: 10px;
+  padding: 9px 4px;
   border: 1px solid var(--color-base-border);
   border-radius: var(--radius-sm);
   background: none;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-text-secondary);
   cursor: pointer;
   text-align: center;
   transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
 .timeSlotBtn:hover:not(.timeSlotUnavailable) {
@@ -375,7 +403,34 @@
   text-decoration: line-through;
 }
 
-/* Step 3 — Member Details */
+/* Empty state before a date is picked */
+.timeSlotsPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  border: 1px dashed var(--color-base-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  gap: var(--space-3);
+}
+
+.timeSlotsPlaceholderIcon {
+  color: var(--color-base-muted);
+}
+
+.timeSlotsPlaceholderText {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ─── Step 3: Member Details ─── */
 .memberForm {
   display: flex;
   flex-direction: column;
@@ -443,6 +498,8 @@
   cursor: pointer;
   transition: border-color var(--transition-fast);
   background: var(--color-base-elevated);
+  width: 100%;
+  text-align: left;
 }
 
 .newMemberToggle:hover {
@@ -502,7 +559,13 @@
   margin-top: var(--space-3);
 }
 
-/* Step 4 — Confirm */
+/* ─── Step 4: Confirm ─── */
+.confirmSections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .confirmSection {
   border: 1px solid var(--color-base-border);
   border-radius: var(--radius-lg);
@@ -567,69 +630,16 @@
   opacity: 0.7;
 }
 
-.confirmSections {
+/* ─── Right Column: Sticky Sidebar with Nav Buttons ─── */
+.bookingSidebar {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--space-6));
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
 
-/* Navigation Buttons */
-.bookingNav {
-  display: flex;
-  gap: var(--space-4);
-  margin-top: var(--space-8);
-  justify-content: flex-end;
-}
-
-.navBtnBack {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  background: none;
-  border: 1px solid var(--color-base-border);
-  padding: 12px 24px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-}
-
-.navBtnBack:hover {
-  border-color: var(--color-text-muted);
-}
-
-.navBtnNext {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-base);
-  background: var(--color-accent);
-  border: none;
-  padding: 12px 24px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
-}
-
-.navBtnNext:hover:not(:disabled) {
-  background: var(--color-accent-light);
-  transform: translateY(-1px);
-}
-
-.navBtnNext:disabled {
-  background: var(--color-base-muted);
-  color: var(--color-text-muted);
-  cursor: not-allowed;
-}
-
-/* ─── Sidebar Summary ─── */
-.bookingSidebar {
-  position: sticky;
-  top: calc(var(--navbar-height) + var(--space-8));
-}
-
+/* Summary Card */
 .sidebarCard {
   border: 1px solid var(--color-base-border);
   border-radius: var(--radius-lg);
@@ -686,7 +696,7 @@
 }
 
 .sidebarTotal {
-  padding: var(--space-5);
+  padding: var(--space-4) var(--space-5);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -704,6 +714,69 @@
   font-family: var(--font-display);
   font-size: 28px;
   font-style: italic;
+  color: var(--color-text-primary);
+}
+
+/* Nav Buttons — inside the sidebar, always visible */
+.sidebarNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.navBtnNext {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-base);
+  background: var(--color-accent);
+  border: none;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.navBtnNext:hover:not(:disabled) {
+  background: var(--color-accent-light);
+  transform: translateY(-1px);
+}
+
+.navBtnNext:disabled {
+  background: var(--color-base-muted);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.navBtnBack {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background: none;
+  border: 1px solid var(--color-base-border);
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.navBtnBack:hover {
+  border-color: var(--color-text-muted);
   color: var(--color-text-primary);
 }
 
@@ -834,7 +907,8 @@
   border-color: var(--color-text-muted);
 }
 
-@media (max-width: 900px) {
+/* ─── Responsive ─── */
+@media (max-width: 960px) {
   .bookingLayout {
     grid-template-columns: 1fr;
   }
@@ -844,8 +918,17 @@
     order: -1;
   }
 
+  .sidebarNav {
+    flex-direction: row;
+  }
+
+  .dateTimeGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
   .timeSlotsGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -854,15 +937,15 @@
     grid-template-columns: 1fr;
   }
 
-  .stepsBar {
-    gap: 0;
-  }
-
   .stepLabel {
     display: none;
   }
 
   .timeSlotsGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sidebarNav {
+    flex-direction: column;
   }
 }

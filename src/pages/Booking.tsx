@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom'
 import React from 'react'
 import {
   ChevronLeft, ChevronRight, Check, Clock, Users,
-  Star, Zap, CheckCircle
+  Star, Zap, CheckCircle, CalendarDays
 } from 'lucide-react'
 import { gymClasses, timeSlots } from '../data'
 import type { GymClass, TimeSlot, MemberDetails, BookingState } from '../types'
@@ -24,7 +24,6 @@ const initialBooking: BookingState = {
   memberDetails: null,
 }
 
-// ─── Categories for step 1 grouping ───
 function groupByCategory(classes: GymClass[]) {
   const map: Record<string, GymClass[]> = {}
   for (const c of classes) {
@@ -34,7 +33,7 @@ function groupByCategory(classes: GymClass[]) {
   return map
 }
 
-// ─── Calendar Component ───
+// ─── Custom Calendar ───
 function BookingCalendar({
   selectedDate,
   onSelect,
@@ -58,7 +57,8 @@ function BookingCalendar({
     else setViewMonth(m => m + 1)
   }
 
-  const isPrevDisabled = viewYear < today.getFullYear() ||
+  const isPrevDisabled =
+    viewYear < today.getFullYear() ||
     (viewYear === today.getFullYear() && viewMonth <= today.getMonth())
 
   const days: (Date | null)[] = []
@@ -70,22 +70,34 @@ function BookingCalendar({
   return (
     <div>
       <div className={styles.calendarHeader}>
-        <button className={styles.calendarNavBtn} onClick={prevMonth} disabled={isPrevDisabled}>
-          <ChevronLeft size={16} />
+        <button
+          className={styles.calendarNavBtn}
+          onClick={prevMonth}
+          disabled={isPrevDisabled}
+          aria-label="Previous month"
+        >
+          <ChevronLeft size={15} />
         </button>
         <span className={styles.calendarMonthLabel}>
           {MONTHS[viewMonth]} {viewYear}
         </span>
-        <button className={styles.calendarNavBtn} onClick={nextMonth}>
-          <ChevronRight size={16} />
+        <button
+          className={styles.calendarNavBtn}
+          onClick={nextMonth}
+          aria-label="Next month"
+        >
+          <ChevronRight size={15} />
         </button>
       </div>
+
       <div className={styles.calendarGrid}>
         {DAYS_SHORT.map(d => (
           <div key={d} className={styles.calendarDayLabel}>{d}</div>
         ))}
         {days.map((date, i) => {
-          if (!date) return <div key={`empty-${i}`} className={cn(styles.calendarDay, styles.calendarDayEmpty)} />
+          if (!date) {
+            return <div key={`empty-${i}`} className={cn(styles.calendarDay, styles.calendarDayEmpty)} />
+          }
           const past = isPastDay(date)
           const closed = isClosedDay(date)
           const selected = selectedDate ? isSameDay(date, selectedDate) : false
@@ -136,7 +148,10 @@ function StepSelectClass({
             {classes.map((c) => (
               <button
                 key={c.id}
-                className={cn(styles.classSelectItem, selected?.id === c.id && styles.classSelectItemSelected)}
+                className={cn(
+                  styles.classSelectItem,
+                  selected?.id === c.id && styles.classSelectItemSelected,
+                )}
                 onClick={() => onSelect(c)}
               >
                 <div className={styles.classSelectItemRadio}>
@@ -145,9 +160,15 @@ function StepSelectClass({
                 <div className={styles.classSelectItemInfo}>
                   <div className={styles.classSelectItemName}>{c.name}</div>
                   <div className={styles.classSelectItemMeta}>
-                    <span className={styles.classSelectItemMetaText}><Clock size={11} />{formatDuration(c.duration)}</span>
-                    <span className={styles.classSelectItemMetaText}><Users size={11} />{c.spotsRemaining} left</span>
-                    <span className={styles.classSelectItemMetaText}><Zap size={11} />{c.difficulty}</span>
+                    <span className={styles.classSelectItemMetaText}>
+                      <Clock size={11} />{formatDuration(c.duration)}
+                    </span>
+                    <span className={styles.classSelectItemMetaText}>
+                      <Users size={11} />{c.spotsRemaining} left
+                    </span>
+                    <span className={styles.classSelectItemMetaText}>
+                      <Zap size={11} />{c.difficulty}
+                    </span>
                     <span className={styles.classSelectItemMetaText}>{c.trainer}</span>
                   </div>
                 </div>
@@ -161,7 +182,7 @@ function StepSelectClass({
   )
 }
 
-// ─── Step 2: Date & Time ───
+// ─── Step 2: Date & Time — calendar left, slots right ───
 function StepDateTime({
   selectedDate,
   selectedSlot,
@@ -177,31 +198,51 @@ function StepDateTime({
     <div>
       <h2 className={styles.stepTitle}>Pick a date & time</h2>
       <p className={styles.stepSubtitle}>Select an available date. Sundays are closed.</p>
-      <BookingCalendar selectedDate={selectedDate} onSelect={onSelectDate} />
 
-      {selectedDate && (
-        <div className={styles.timeSlotsSection}>
-          <p className={styles.timeSlotsTitle}>
-            Available times — {selectedDate.toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric' })}
-          </p>
-          <div className={styles.timeSlotsGrid}>
-            {timeSlots.map((slot) => (
-              <button
-                key={slot.id}
-                className={cn(
-                  styles.timeSlotBtn,
-                  !slot.available && styles.timeSlotUnavailable,
-                  selectedSlot?.id === slot.id && styles.timeSlotSelected,
-                )}
-                onClick={() => slot.available && onSelectSlot(slot)}
-                disabled={!slot.available}
-              >
-                {slot.time}
-              </button>
-            ))}
-          </div>
+      {/* Side-by-side: calendar on left, time slots on right */}
+      <div className={styles.dateTimeGrid}>
+        <div className={styles.calendarColumn}>
+          <BookingCalendar selectedDate={selectedDate} onSelect={onSelectDate} />
         </div>
-      )}
+
+        <div className={styles.timeSlotsColumn}>
+          {selectedDate ? (
+            <>
+              <p className={styles.timeSlotsTitle}>Available Times</p>
+              <p className={styles.timeSlotsSelectedDate}>
+                {selectedDate.toLocaleDateString('en-CA', {
+                  weekday: 'long',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+              <div className={styles.timeSlotsGrid}>
+                {timeSlots.map((slot) => (
+                  <button
+                    key={slot.id}
+                    className={cn(
+                      styles.timeSlotBtn,
+                      !slot.available && styles.timeSlotUnavailable,
+                      selectedSlot?.id === slot.id && styles.timeSlotSelected,
+                    )}
+                    onClick={() => slot.available && onSelectSlot(slot)}
+                    disabled={!slot.available}
+                  >
+                    {slot.time}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className={styles.timeSlotsPlaceholder}>
+              <CalendarDays size={28} className={styles.timeSlotsPlaceholderIcon} />
+              <p className={styles.timeSlotsPlaceholderText}>
+                Select a date<br />to see available times
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
@@ -248,13 +289,14 @@ function StepMemberDetails({
           <div className={styles.formGroup}>
             <label className={styles.formLabel}>Last Name</label>
             <input
-              className={cn(styles.formInput, errors.lastName && styles.formInputError)}
+              className={styles.formInput}
               placeholder="Vasquez"
               value={details.lastName}
               onChange={(e) => update('lastName', e.target.value)}
             />
           </div>
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.formLabel}>Email Address</label>
           <input
@@ -266,6 +308,7 @@ function StepMemberDetails({
           />
           {errors.email && <span className={styles.formError}>{errors.email}</span>}
         </div>
+
         <div className={styles.formGroup}>
           <label className={styles.formLabel}>Phone Number</label>
           <input
@@ -315,7 +358,7 @@ function StepConfirm({
   return (
     <div>
       <h2 className={styles.stepTitle}>Review your booking</h2>
-      <p className={styles.stepSubtitle}>Check the details below before confirming.</p>
+      <p className={styles.stepSubtitle}>Check everything below before confirming.</p>
 
       <div className={styles.confirmSections}>
         <div className={styles.confirmSection}>
@@ -335,14 +378,20 @@ function StepConfirm({
           <div className={styles.confirmRow}>
             <span className={styles.confirmRowLabel}>Price</span>
             <span className={styles.confirmRowValue}>
-              {memberDetails.isNewMember
-                ? <><s style={{ color: 'var(--color-text-muted)', marginRight: '6px' }}>{formatPrice(selectedClass.price)}</s><span style={{ color: 'var(--color-gold)' }}>Free Trial</span></>
-                : formatPrice(selectedClass.price)
-              }
+              {memberDetails.isNewMember ? (
+                <>
+                  <s style={{ color: 'var(--color-text-muted)', marginRight: '6px' }}>
+                    {formatPrice(selectedClass.price)}
+                  </s>
+                  <span style={{ color: 'var(--color-gold)' }}>Free Trial</span>
+                </>
+              ) : (
+                formatPrice(selectedClass.price)
+              )}
             </span>
           </div>
           <div className={styles.confirmRow}>
-            <span className={styles.confirmRowLabel}>&nbsp;</span>
+            <span className={styles.confirmRowLabel} />
             <button className={styles.confirmEditBtn} onClick={() => onEditStep(0)}>Edit</button>
           </div>
         </div>
@@ -358,7 +407,7 @@ function StepConfirm({
             <span className={styles.confirmRowValue}>{selectedTimeSlot.time}</span>
           </div>
           <div className={styles.confirmRow}>
-            <span className={styles.confirmRowLabel}>&nbsp;</span>
+            <span className={styles.confirmRowLabel} />
             <button className={styles.confirmEditBtn} onClick={() => onEditStep(1)}>Edit</button>
           </div>
         </div>
@@ -367,7 +416,9 @@ function StepConfirm({
           <div className={styles.confirmSectionTitle}>Member Details</div>
           <div className={styles.confirmRow}>
             <span className={styles.confirmRowLabel}>Name</span>
-            <span className={styles.confirmRowValue}>{memberDetails.firstName} {memberDetails.lastName}</span>
+            <span className={styles.confirmRowValue}>
+              {memberDetails.firstName} {memberDetails.lastName}
+            </span>
           </div>
           <div className={styles.confirmRow}>
             <span className={styles.confirmRowLabel}>Email</span>
@@ -378,11 +429,13 @@ function StepConfirm({
             <span className={styles.confirmRowValue}>{memberDetails.phone || '—'}</span>
           </div>
           <div className={styles.confirmRow}>
-            <span className={styles.confirmRowLabel}>Member Type</span>
-            <span className={styles.confirmRowValue}>{memberDetails.isNewMember ? 'New Member (Free Trial)' : 'Existing Member'}</span>
+            <span className={styles.confirmRowLabel}>Type</span>
+            <span className={styles.confirmRowValue}>
+              {memberDetails.isNewMember ? 'New Member (Free Trial)' : 'Existing Member'}
+            </span>
           </div>
           <div className={styles.confirmRow}>
-            <span className={styles.confirmRowLabel}>&nbsp;</span>
+            <span className={styles.confirmRowLabel} />
             <button className={styles.confirmEditBtn} onClick={() => onEditStep(2)}>Edit</button>
           </div>
         </div>
@@ -391,7 +444,7 @@ function StepConfirm({
   )
 }
 
-// ─── Sidebar Summary ───
+// ─── Booking Summary (sidebar card) ───
 function BookingSummary({ booking }: { booking: BookingState }) {
   const { selectedClass, selectedDate, selectedTimeSlot, memberDetails } = booking
   const hasAny = selectedClass || selectedDate || selectedTimeSlot
@@ -420,7 +473,11 @@ function BookingSummary({ booking }: { booking: BookingState }) {
             <div className={styles.sidebarItem}>
               <span className={styles.sidebarItemLabel}>Date</span>
               <span className={styles.sidebarItemValue}>
-                {selectedDate.toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' })}
+                {selectedDate.toLocaleDateString('en-CA', {
+                  weekday: 'short',
+                  month: 'short',
+                  day: 'numeric',
+                })}
               </span>
             </div>
           )}
@@ -433,7 +490,9 @@ function BookingSummary({ booking }: { booking: BookingState }) {
           {memberDetails?.firstName && (
             <div className={styles.sidebarItem}>
               <span className={styles.sidebarItemLabel}>Member</span>
-              <span className={styles.sidebarItemValue}>{memberDetails.firstName} {memberDetails.lastName}</span>
+              <span className={styles.sidebarItemValue}>
+                {memberDetails.firstName} {memberDetails.lastName}
+              </span>
             </div>
           )}
           {selectedClass && (
@@ -482,7 +541,12 @@ function SuccessScreen({ booking, onReset }: { booking: BookingState; onReset: (
           <div className={styles.successDetail}>
             <span className={styles.successDetailLabel}>Date</span>
             <span className={styles.successDetailValue}>
-              {selectedDate.toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+              {selectedDate.toLocaleDateString('en-CA', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })}
             </span>
           </div>
         )}
@@ -495,7 +559,9 @@ function SuccessScreen({ booking, onReset }: { booking: BookingState; onReset: (
         {memberDetails && (
           <div className={styles.successDetail}>
             <span className={styles.successDetailLabel}>Member</span>
-            <span className={styles.successDetailValue}>{memberDetails.firstName} {memberDetails.lastName}</span>
+            <span className={styles.successDetailValue}>
+              {memberDetails.firstName} {memberDetails.lastName}
+            </span>
           </div>
         )}
         {selectedClass && (
@@ -533,34 +599,26 @@ export default function Booking() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  // Pre-select class from URL param
   useEffect(() => {
     const classId = searchParams.get('class')
     if (classId) {
       const found = gymClasses.find(c => c.id === classId)
-      if (found) {
-        setBooking(b => ({ ...b, selectedClass: found }))
-      }
+      if (found) setBooking(b => ({ ...b, selectedClass: found }))
     }
   }, [searchParams])
 
   const canAdvance = () => {
     if (step === 0) return !!booking.selectedClass
     if (step === 1) return !!booking.selectedDate && !!booking.selectedTimeSlot
-    if (step === 2) return !!memberDetails.firstName && !!memberDetails.lastName && !!memberDetails.email
+    if (step === 2) return !!(memberDetails.firstName && memberDetails.lastName && memberDetails.email)
     return true
   }
 
   const advance = () => {
-    if (step === 2) {
-      setBooking(b => ({ ...b, memberDetails }))
-    }
+    if (step === 2) setBooking(b => ({ ...b, memberDetails }))
     if (step === 3) {
       setLoading(true)
-      setTimeout(() => {
-        setLoading(false)
-        setSubmitted(true)
-      }, 1200)
+      setTimeout(() => { setLoading(false); setSubmitted(true) }, 1200)
       return
     }
     setStep(s => s + 1)
@@ -590,6 +648,7 @@ export default function Booking() {
 
   return (
     <div className={styles.bookingPage}>
+      {/* Header + step progress */}
       <div className={styles.bookingHeader}>
         <div className="container">
           <h1 className={styles.bookingHeaderTitle}>Book a Session</h1>
@@ -617,8 +676,11 @@ export default function Booking() {
         </div>
       </div>
 
+      {/* Two-column layout: content left, sticky sidebar right */}
       <div className="container">
         <div className={styles.bookingLayout}>
+
+          {/* LEFT — step content, scrolls naturally */}
           <div className={styles.bookingPanel}>
             {step === 0 && (
               <StepSelectClass
@@ -646,32 +708,35 @@ export default function Booking() {
                 onEditStep={editStep}
               />
             )}
+          </div>
 
-            <div className={styles.bookingNav}>
-              {step > 0 && (
-                <button className={styles.navBtnBack} onClick={back}>
-                  <ChevronLeft size={14} style={{ display: 'inline', marginRight: '4px' }} />
-                  Back
-                </button>
-              )}
+          {/* RIGHT — sticky: summary card + nav buttons always visible */}
+          <div className={styles.bookingSidebar}>
+            <BookingSummary booking={fullBooking} />
+
+            {/* Nav buttons live here — always in view, no scrolling needed */}
+            <div className={styles.sidebarNav}>
               <button
                 className={styles.navBtnNext}
                 onClick={advance}
                 disabled={!canAdvance() || loading}
               >
-                {loading
-                  ? 'Confirming...'
-                  : step === 3
-                  ? 'Confirm Booking'
-                  : <>Next <ChevronRight size={14} style={{ display: 'inline', marginLeft: '4px' }} /></>
-                }
+                {loading ? (
+                  'Confirming...'
+                ) : step === 3 ? (
+                  <><Check size={14} /> Confirm Booking</>
+                ) : (
+                  <>Next <ChevronRight size={14} /></>
+                )}
               </button>
+              {step > 0 && (
+                <button className={styles.navBtnBack} onClick={back}>
+                  <ChevronLeft size={14} /> Back
+                </button>
+              )}
             </div>
           </div>
 
-          <div className={styles.bookingSidebar}>
-            <BookingSummary booking={fullBooking} />
-          </div>
         </div>
       </div>
     </div>
